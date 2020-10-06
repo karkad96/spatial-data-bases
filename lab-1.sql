@@ -24,7 +24,7 @@ GRANT ksiegowosc TO dummy;
 --4
 	--a)
 	CREATE TABLE pracownicy(id_pracownika SERIAL, imie VARCHAR(50) NOT NULL, nazwisko VARCHAR(50) NOT NULL,
-	adres VARCHAR(50) NOT NULL, telefon VARCHAR(9));
+	adres VARCHAR(50) NOT NULL, telefon VARCHAR(11));
 
 	CREATE TABLE godziny(id_godziny SERIAL, data DATE NOT NULL, liczba_godzin INTEGER NOT NULL,
 	id_pracownika INTEGER NOT NULL);
@@ -115,17 +115,17 @@ GRANT ksiegowosc TO dummy;
 
 --inserting
 INSERT INTO pracownicy (imie, nazwisko, adres, telefon) 
-VALUES ('Jan',      'Kowalski',   'Wadowicka 19',       '123343456'),
-       ('Szczepan', 'Konon',      'Akadamicka 60',      '124233857'),
-       ('Karol',    'Nowak',      'Dwornika 13',        '623740856'),
-       ('Jaroslaw', 'Polskezbaw', 'Schizofreniczna 69', '720073851'),
-       ('Beata',    'Kula',       'Starowislna 23',     '223343052'),
-       ('Marek',    'Niezdarek',  'Matecznego 1',       '482343459'),
-       ('Pawel',    'Broda',      'Rydlowka 53',        '423052450'),
-       ('Alicja',   'Czara',      'Krakowska 109',      '227343456'),
-       ('Adam',     'Dlugopis',   'Mickiewicza 6',      '520343056'),
-       ('Jessica',  'Jones',      'Mostowa 666',        '923303457'),
-       ('Curt',     'Cobain',     'Kaliber 44',         '287246728');
+VALUES ('Jan',      'Kowalski',   'Wadowicka 19',       '123 343 456'),
+       ('Szczepan', 'Konon',      'Akadamicka 60',      '124 233 857'),
+       ('Karol',    'Nowak',      'Dwornika 13',        '623 740 856'),
+       ('Jaroslaw', 'Polskezbaw', 'Schizofreniczna 69', '720 073 851'),
+       ('Beata',    'Kula',       'Starowislna 23',     '223 343 052'),
+       ('Marek',    'Niezdarek',  'Matecznego 1',       '482 343 459'),
+       ('Pawel',    'Broda',      'Rydlowka 53',        '423 052 450'),
+       ('Alicja',   'Czara',      'Krakowska 109',      '227 343 456'),
+       ('Adam',     'Dlugopis',   'Mickiewicza 6',      '520 343 056'),
+       ('Jessica',  'Jones',      'Mostowa 666',        '923 303 457'),
+       ('Curt',     'Cobain',     'Kaliber 44',         '287 246 728');
        
 /* 
 	aby dostac numer tygodnia trzeba uzyc: 
@@ -244,7 +244,7 @@ VALUES ('2020-01-15', 1,  15, 12, 3),
 	--b)
 	SELECT imie, nazwisko FROM pracownicy, wynagrodzenia, pensja_stanowisko, premia WHERE
 	wynagrodzenia.id_pracownika=pracownicy.id_pracownika AND wynagrodzenia.id_pensji=pensja_stanowisko.id_pensji AND
-	wynagrodzenia.id_premii=premia.id_premii ORDER BY pensja_stanowisko.kwota DESC, premia.kwota DESC;
+	wynagrodzenia.id_premii=premia.id_premii ORDER BY pensja_stanowisko.kwota + premia.kwota DESC;
 	--b)
 	
 	--c)
@@ -279,4 +279,27 @@ VALUES ('2020-01-15', 1,  15, 12, 3),
 	pensja_stanowisko.kwota < 1200);
 	--h)
 --7
+
+--8
+	--a)
+	ALTER TABLE pracownicy 
+	ALTER COLUMN telefon TYPE VARCHAR(16);
+	
+	UPDATE pracownicy SET telefon = CONCAT('(+48)', telefon);
+	--a)
+	
+	--b)
+	UPDATE pracownicy SET telefon = REPLACE(telefon, ' ', '-');
+	--b)
+	
+	--c)
+	SELECT id_pracownika, UPPER(imie), UPPER(nazwisko), UPPER(adres), telefon FROM pracownicy WHERE 
+	LENGTH(nazwisko) = (SELECT MAX(LENGTH(nazwisko)) FROM pracownicy);
+	--c)
+	
+	--d)
+	SELECT MD5(imie||nazwisko||adres||telefon||pensja_stanowisko.kwota) FROM pracownicy, pensja_stanowisko, wynagrodzenia WHERE
+	wynagrodzenia.id_pracownika=pracownicy.id_pracownika AND wynagrodzenia.id_pensji=pensja_stanowisko.id_pensji;
+	--d)
+--8
 
