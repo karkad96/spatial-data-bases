@@ -244,7 +244,7 @@ VALUES ('2020-01-15', 1,  15, 12, 3),
 	--b)
 	SELECT imie, nazwisko FROM pracownicy, wynagrodzenia, pensja_stanowisko, premia WHERE
 	wynagrodzenia.id_pracownika=pracownicy.id_pracownika AND wynagrodzenia.id_pensji=pensja_stanowisko.id_pensji AND
-	wynagrodzenia.id_premii=premia.id_premii ORDER BY pensja_stanowisko.kwota DESC, premia.kwota DESC;
+	wynagrodzenia.id_premii=premia.id_premii ORDER BY pensja_stanowisko.kwota + premia.kwota DESC;
 	--b)
 	
 	--c)
