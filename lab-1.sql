@@ -3,12 +3,6 @@ CREATE DATABASE s283109;
 \c s283109
 --1
 
-drop table wynagrodzenia;
-drop table godziny;
-drop table pracownicy;
-drop table pensja_stanowisko;
-drop table premia;
-
 --2
 CREATE SCHEMA firma;
 SET search_path TO firma;
