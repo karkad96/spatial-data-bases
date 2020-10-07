@@ -3,6 +3,12 @@ CREATE DATABASE s283109;
 \c s283109
 --1
 
+drop table wynagrodzenia;
+drop table godziny;
+drop table pracownicy;
+drop table pensja_stanowisko;
+drop table premia;
+
 --2
 CREATE SCHEMA firma;
 SET search_path TO firma;
@@ -251,7 +257,8 @@ DROP TABLE temp;
 	SELECT imie, nazwisko, miesiac, SUM(liczba_godzin) FROM pracownicy 
 	INNER JOIN wynagrodzenia ON wynagrodzenia.id_pracownika=pracownicy.id_pracownika
 	INNER JOIN godziny ON godziny.id_godziny=wynagrodzenia.id_godziny
-	GROUP BY imie, nazwisko, miesiac HAVING SUM(liczba_godzin) > 160 ORDER BY imie, nazwisko, miesiac;
+	INNER JOIN premia ON premia.id_premii=wynagrodzenia.id_premii
+	GROUP BY imie, nazwisko, miesiac, kwota HAVING SUM(liczba_godzin) > 160 AND kwota=0 ORDER BY imie, nazwisko, miesiac;
 	--h)
 --6
 
