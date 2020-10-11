@@ -6,10 +6,6 @@
 
 --1,2,3,4,5
 
-DROP TABLE zamowienia;
-DROP TABLE produkty;
-DROP TABLE producenci;
-
 --6
 INSERT INTO producenci (nazwa_producenta, mail, telefon) 
 VALUES ('A', 'A@gmail.com', '12353454'),
@@ -80,10 +76,11 @@ VALUES ('2020-10-10', 101, 3,  8),
 	--a)
 	
 	--b)
-	SELECT 'Producent: '||nazwa_producenta||', liczba zamowien: '||SUM(ilosc_zamowien)
+	SELECT 'Produkt: '||nazwa_produktu||', liczba zamowien: '||SUM(ilosc_zamowien)
 	AS raport FROM zamowienia
+	INNER JOIN produkty ON produkty.id_produktu=zamowienia.id_produktu
 	INNER JOIN producenci ON producenci.id_producenta=zamowienia.id_producenta
-	GROUP BY nazwa_producenta;
+	GROUP BY nazwa_produktu;
 	--b)
 	
 	--c)
@@ -113,3 +110,150 @@ VALUES ('2020-10-10', 101, 3,  8),
 	GROUP BY nazwa_producenta, nazwa_produktu) AS foo GROUP BY nazwa_produktu ORDER BY mx DESC LIMIT 1;
 	--g)
 --11
+
+--12
+	--a)
+	SELECT 'Produkt '||UPPER(nazwa_produktu)||', ktorego producentami jest '||LOWER(nazwa_producenta)||', zamowiono '||SUM(ilosc_zamowien)||' razy'
+	AS opis FROM zamowienia
+	INNER JOIN produkty ON produkty.id_produktu=zamowienia.id_produktu
+	INNER JOIN producenci ON producenci.id_producenta=zamowienia.id_producenta
+	GROUP BY nazwa_produktu, nazwa_producenta ORDER BY SUM(ilosc_zamowien) DESC;
+	--a)
+	
+	--b)
+	SELECT nazwa_produktu, SUM(ilosc_zamowien*cena) AS ilosc FROM zamowienia
+	INNER JOIN produkty ON produkty.id_produktu=zamowienia.id_produktu
+	INNER JOIN producenci ON producenci.id_producenta=zamowienia.id_producenta
+	GROUP BY nazwa_produktu ORDER BY SUM(ilosc_zamowien*cena);
+	--b)
+	
+	--c)
+	CREATE TABLE sklep.klienci (id_klienta SERIAL, nazwa_klienta VARCHAR(50)  NOT NULL, mail varchar(50)  NOT NULL, telefon varchar(17));
+	ALTER TABLE klienci ADD PRIMARY KEY (id_klienta);
+	--c)
+	
+	--d)
+	ALTER TABLE zamowienia 
+	ADD COLUMN id_klienta INTEGER NOT NULL DEFAULT 0;
+	
+	INSERT INTO klienci (nazwa_klienta, mail, telefon) 
+	VALUES ('klient1',  'klient1@gmail.com',  '12353454'),
+	       ('klient2',  'klient2@gmail.com',  '46798723'),
+	       ('klient3',  'klient3@gmail.com',  '89745783'),
+	       ('klient4',  'klient4@gmail.com',  '94897462'),
+	       ('klient5',  'klient5@gmail.com',  '23576496'), 
+	       ('klient6',  'klient6@gmail.com',  '34865732'),
+	       ('klient7',  'klient7@gmail.com',  '53489345'),
+	       ('klient8',  'klient8@gmail.com',  '42378444'),
+	       ('klient9',  'klient9@gmail.com',  '69847324'),
+	       ('klient10', 'klient10@gmail.com', '25783468');
+	
+	UPDATE zamowienia SET id_klienta = 9 WHERE id_zamowenia = 1;
+	UPDATE zamowienia SET id_klienta = 3 WHERE id_zamowenia = 2;
+	UPDATE zamowienia SET id_klienta = 4 WHERE id_zamowenia = 3;
+	UPDATE zamowienia SET id_klienta = 10 WHERE id_zamowenia = 4;
+	UPDATE zamowienia SET id_klienta = 3 WHERE id_zamowenia = 5;
+	UPDATE zamowienia SET id_klienta = 4 WHERE id_zamowenia = 6;
+	UPDATE zamowienia SET id_klienta = 5 WHERE id_zamowenia = 7;
+	UPDATE zamowienia SET id_klienta = 1 WHERE id_zamowenia = 8;
+	UPDATE zamowienia SET id_klienta = 3 WHERE id_zamowenia = 9;
+	UPDATE zamowienia SET id_klienta = 6 WHERE id_zamowenia = 10;
+	UPDATE zamowienia SET id_klienta = 8 WHERE id_zamowenia = 11;
+	UPDATE zamowienia SET id_klienta = 2 WHERE id_zamowenia = 12;
+	UPDATE zamowienia SET id_klienta = 8 WHERE id_zamowenia = 13;
+	UPDATE zamowienia SET id_klienta = 1 WHERE id_zamowenia = 14;
+	UPDATE zamowienia SET id_klienta = 2 WHERE id_zamowenia = 15;
+	UPDATE zamowienia SET id_klienta = 1 WHERE id_zamowenia = 16;
+	UPDATE zamowienia SET id_klienta = 6 WHERE id_zamowenia = 17;
+	UPDATE zamowienia SET id_klienta = 1 WHERE id_zamowenia = 18;
+	UPDATE zamowienia SET id_klienta = 7 WHERE id_zamowenia = 19;
+	UPDATE zamowienia SET id_klienta = 10 WHERE id_zamowenia = 20;
+	
+	ALTER TABLE zamowienia 
+	ADD CONSTRAINT constraint_zamowienia_klient
+	FOREIGN KEY (id_klienta) 
+	REFERENCES klienci (id_klienta)
+	ON DELETE CASCADE;
+	--d)
+	
+	--e)
+	SELECT nazwa_klienta, nazwa_produktu, ilosc_zamowien, SUM(ilosc_zamowien*cena) AS wartosc_zamowienia FROM zamowienia
+	INNER JOIN produkty ON produkty.id_produktu=zamowienia.id_produktu
+	INNER JOIN producenci ON producenci.id_producenta=zamowienia.id_producenta
+	INNER JOIN klienci ON klienci.id_klienta=zamowienia.id_klienta
+	GROUP BY nazwa_klienta, nazwa_produktu, ilosc_zamowien;
+	--e)
+	
+	--f)
+	--f)
+	
+	--g)
+	--g)
+--12
+
+--13
+	--a)
+	CREATE TABLE sklep.numer (liczba SMALLINT);
+	--a)
+	
+	--b)
+	CREATE SEQUENCE liczba_seq
+	INCREMENT 5
+	MINVALUE 0 
+	MAXVALUE 125
+	START 100
+	CYCLE
+	OWNED BY numer.liczba;
+	--b)
+	
+	--c)
+	INSERT INTO numer(liczba)
+	VALUES (nextval('liczba_seq')),
+	       (nextval('liczba_seq')),
+	       (nextval('liczba_seq')),
+	       (nextval('liczba_seq')),
+	       (nextval('liczba_seq')),
+	       (nextval('liczba_seq')),
+	       (nextval('liczba_seq'));
+	--c)
+	
+	--d)
+	ALTER SEQUENCE liczba_seq
+	INCREMENT BY 6;
+	--d)
+	
+	--e)
+	SELECT last_value FROM liczba_seq;
+	SELECT nextval('liczba_seq');
+	--e)
+	
+	--f)
+	DROP SEQUENCE liczba_seq;
+	--f)
+--13
+
+--14
+	--a)
+	\du
+	--a)
+	
+	--b)
+	--b)
+	
+	--c)
+	--c)
+--14
+
+--15
+	--a)
+	BEGIN;
+	UPDATE produkty SET cena = cena + 10.00;
+	COMMIT;
+	--a)
+	
+	--b)
+	--b)
+	
+	--c)
+	--c)
+--15
