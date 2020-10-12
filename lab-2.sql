@@ -185,9 +185,24 @@ VALUES ('2020-10-10', 101, 3,  8),
 	--e)
 	
 	--f)
+	SELECT 'NAJCZESCIEJ ZAMAWIAJACY: '||nazwa_klienta||' calkowita kwota zamowien: '||cena
+	FROM (SELECT nazwa_klienta, SUM(cena*ilosc_zamowien) AS cena FROM zamowienia 
+	INNER JOIN klienci ON zamowienia.id_klienta=klienci.id_klienta 
+	INNER JOIN produkty ON produkty.id_produktu=zamowienia.id_produktu 
+	GROUP BY nazwa_klienta
+	ORDER BY COUNT(nazwa_klienta) DESC LIMIT 1) as foo1 
+	UNION 
+	SELECT 'NAJRZADZIEJ ZAMAWIAJACY: '||nazwa_klienta||' calkowita kwota zamowien: '||cena 
+	FROM (SELECT  nazwa_klienta, SUM(cena*ilosc_zamowien)  AS cena FROM zamowienia 
+	INNER JOIN klienci ON zamowienia.id_klienta=klienci.id_klienta 
+	INNER JOIN produkty ON produkty.id_produktu = zamowienia.id_produktu 
+	GROUP BY nazwa_klienta
+	ORDER BY COUNT(nazwa_klienta) LIMIT 1) AS foo2;
 	--f)
 	
 	--g)
+	DELETE FROM produkty WHERE id_produktu IN 
+	(SELECT produkty.id_produktu FROM produkty WHERE id_produktu NOT IN (SELECT id_produktu FROM zamowienia));
 	--g)
 --12
 
@@ -272,7 +287,10 @@ VALUES ('2020-10-10', 101, 3,  8),
 	SAVEPOINT S1;
 	UPDATE zamowienia SET ilosc_zamowien = ilosc_zamowien*1.25;
 	SAVEPOINT S2;
-	DELETE FROM zamowienia WHERE ilosc_zamowien=(SELECT MAX(ilosc_zamowien) FROM zamowienia);
+	DELETE FROM klienci WHERE id_klienta IN (SELECT zamowienia.id_klienta FROM klienci 
+	INNER JOIN zamowienia ON zamowienia.id_klienta = klienci.id_klienta 
+	GROUP BY zamowienia.id_klienta 
+	ORDER BY zamowienia.id_klienta DESC LIMIT 1);
 	ROLLBACK TO SAVEPOINT S1;
 	ROLLBACK;
 	--b)
