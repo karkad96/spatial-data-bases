@@ -252,8 +252,23 @@ VALUES ('2020-10-10', 101, 3,  8),
 	--a)
 	
 	--b)
+	BEGIN;
+	UPDATE produkty SET cena = cena*1.1 WHERE id_produktu=3;
+	SAVEPOINT S1;
+	UPDATE zamowienia SET ilosc_zamowien = ilosc_zamowien*1.25;
+	SAVEPOINT S2;
+	DELETE FROM zamowienia WHERE ilosc_zamowien=(SELECT MAX(ilosc_zamowien) FROM zamowienia);
+	ROLLBACK TO SAVEPOINT S1;
+	ROLLBACK;
 	--b)
 	
 	--c)
+	CREATE OR REPLACE FUNCTION udzial_producentow() RETURNS SETOF VARCHAR AS
+	E'SELECT nazwa_producenta||\' - \'||ROUND(100*SUM(ilosc_zamowien)::FLOAT/(SELECT SUM(ilosc_zamowien) FROM zamowienia))||\'% wszystkich zamowien\'
+	FROM zamowienia 
+	INNER JOIN produkty ON zamowienia.id_produktu=produkty.id_produktu 
+	INNER JOIN producenci ON zamowienia.id_producenta=producenci.id_producenta 
+	GROUP BY nazwa_producenta;'
+	LANGUAGE SQL;
 	--c)
 --15
