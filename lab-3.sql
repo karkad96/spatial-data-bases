@@ -59,7 +59,7 @@ VALUES ('POINT(1 3.5)', 'G'),
 	--g)
 	SELECT budynki.nazwa FROM budynki WHERE ST_X(ST_Centroid(budynki.geometria)) > 4.5;
 	SELECT ST_Area((SELECT geometria FROM budynki WHERE nazwa='BuildingC')) + ST_Area('POLYGON((4 7, 6 7, 6 8, 4 8, 4 7))') - 
-	ST_Area(ST_Intersection((SELECT geometria FROM budynki WHERE nazwa='BuildingC'), 'POLYGON((4 7, 6 7, 6 8, 4 8, 4 7))')) AS area;
+	2*ST_Area(ST_Intersection((SELECT geometria FROM budynki WHERE nazwa='BuildingC'), 'POLYGON((4 7, 6 7, 6 8, 4 8, 4 7))')) AS area;
 	--g)
 --6
 
