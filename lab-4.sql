@@ -5,7 +5,7 @@
 --4
 CREATE TABLE tableB AS
 SELECT popp.gid, popp.cat, popp.f_codedesc, popp.f_code, popp.type, popp.geom 
-FROM popp, majrivers GROUP BY popp.gid HAVING MIN(ST_Distance(majrivers.geom, popp.geom)) < 100000;
+FROM popp, majrivers GROUP BY popp.gid HAVING MIN(ST_Distance(majrivers.geom, popp.geom)) < 100000 AND popp.f_codedesc='Building';
 
 SELECT COUNT(*) FROM tableB;
 --4
