@@ -31,4 +31,9 @@ WHERE lakes.names='Iliamna Lake' AND airports.name='AMBLER'), 1000));
 --6
 
 --7
+SELECT v.vegdesc, SUM(v.sum) FROM
+(SELECT vegdesc, SUM(trees.area_km2) FROM trees JOIN tundra ON ST_Contains(tundra.geom, trees.geom) GROUP BY vegdesc
+UNION ALL
+SELECT vegdesc, SUM(trees.area_km2) FROM trees JOIN swamp ON ST_Contains(swamp.geom, trees.geom) GROUP BY vegdesc) AS v
+GROUP BY v.vegdesc;
 --7
